@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-In this project you will build and explain a small music recommender system.
+TBD.
 
 Your goal is to:
 
