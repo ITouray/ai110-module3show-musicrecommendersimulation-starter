@@ -2,16 +2,23 @@
 
 ## Project Summary
 
-TBD.
+**ContentMatch 1.0** is a content-based music recommendation engine that demonstrates how real-world AI recommenders work by scoring songs based on user taste profiles. The system matches songs to user preferences using a weighted scoring formula: **genre match (+2.0 points) → mood match (+1.0 point) → energy similarity (0-1.0 points)**, then ranks and explains the top 5 recommendations.
 
-Your goal is to:
+**What this project does:**
+- ✓ Loads a 20-song catalog with 17 genres and 12 mood categories
+- ✓ Accepts user preferences (favorite_genre, favorite_mood, target_energy)
+- ✓ Scores each song using transparent, rule-based logic
+- ✓ Returns top K recommendations with explanations of why each song matched
+- ✓ Runs as a command-line simulation with multiple test profiles
 
-- Represent songs and a user "taste profile" as data
-- Design a scoring rule that turns that data into recommendations
-- Evaluate what your system gets right and wrong
-- Reflect on how this mirrors real world AI recommenders
+**What we discovered:**
+- Genre dominance (+2.0 weight) overwhelms other factors—creating a "genre cliff" where perfect mood/energy matches lose to mediocre genre matches
+- Niche genres (classical: 1 song) create recommendation deserts—users get perfect 1.000 scores for the only option, then cliff-drop to 0.458 for alternatives
+- Silent failures occur when preferences don't co-exist in the dataset (e.g., high-energy + sad mood)—the algorithm falls back without explanation
+- The system is fair to mainstream genres (pop, rock) but isolates users of niche genres
 
-Replace this paragraph with your own summary of what your version does.
+**Key insights:**
+This project reveals that recommendation algorithms encode **design choices as values**—weighting decisions, feature selection, and data representation all introduce bias. By building and testing ContentMatch across 11 user profiles (5 standard + 6 adversarial edge cases), we identified critical fairness issues that mirror real-world apps like Spotify and Apple Music.
 
 ---
 
