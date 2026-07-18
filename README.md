@@ -207,6 +207,314 @@ Loading songs from data/songs.csv...
       - Energy match (0.98)
 ```
 
+---
+
+## Adversarial / Edge Case Testing
+
+To stress-test the algorithm, I designed profiles with conflicting preferences or non-existent values. Here's what happens when the system encounters adversarial inputs:
+
+### Key Findings:
+
+1. **Genre Dominance**: When genre doesn't match anything (e.g., "reggaeton"), the algorithm falls back entirely to mood/energy. Genre's +2.0 weight creates a cliff: either you get it, or you don't.
+
+2. **Mood Over-reliance**: When mood doesn't exist in the dataset (Edge Case 2), the algorithm *still performs well* because genre match (+2.0) carries the result.
+
+3. **Energy Tie-breaking**: When genre/mood conflict (Edge Case 5: want "lofi" + high energy 0.92), the algorithm correctly prioritizes **genre** and ignores the conflicting energy preference. This shows the weighting hierarchy works.
+
+4. **Extreme Values Work Well**: Extreme energy preferences (0.1 or 0.99) produce sensible results—the algorithm doesn't break.
+
+5. **Single-Song Genres Dominate**: Niche genres like "classical" (only 1 song) get a perfect 1.000 score, showing the algorithm's **genre bias** can exclude diversity.
+
+### Edge Case Results:
+
+**Edge Case 1: Non-existent Genre (Reggaeton)**
+```
+Loading songs from data/songs.csv...
+  ✓ Loaded 20 songs
+
+============================================================
+  EDGE CASE 1: Non-existent Genre (Reggaeton) -- Top 5 Results
+============================================================
+
+#1  Urban Beats by DJ Nova
+    Genre: hip-hop | Mood: energetic | Tempo: 95 BPM
+    Match Score: 0.495 / 1.000
+
+    Why this song?
+      - Mood match
+      - Energy match (0.98)
+------------------------------------------------------------
+
+#2  Techno Pulse by Electronic Beats
+    Genre: techno | Mood: energetic | Tempo: 135 BPM
+    Match Score: 0.485 / 1.000
+
+    Why this song?
+      - Mood match
+      - Energy match (0.94)
+------------------------------------------------------------
+
+#3  Sunrise City by Neon Echo
+    Genre: pop | Mood: happy | Tempo: 118 BPM
+    Match Score: 0.242 / 1.000
+
+    Why this song?
+      - Energy match (0.97)
+------------------------------------------------------------
+
+#4  Storm Runner by Voltline
+    Genre: rock | Mood: intense | Tempo: 152 BPM
+    Match Score: 0.235 / 1.000
+
+    Why this song?
+      - Energy match (0.94)
+------------------------------------------------------------
+
+#5  Electric Dreams by Synth Wave
+    Genre: electronic | Mood: uplifting | Tempo: 128 BPM
+    Match Score: 0.233 / 1.000
+
+    Why this song?
+      - Energy match (0.93)
+```
+
+**Edge Case 2: Non-existent Mood (Transcendent)**
+```
+============================================================
+  EDGE CASE 2: Non-existent Mood (Transcendent) -- Top 5 Results
+============================================================
+
+#1  Coffee Shop Stories by Slow Stereo
+    Genre: jazz | Mood: relaxed | Tempo: 90 BPM
+    Match Score: 0.718 / 1.000
+
+    Why this song?
+      - Genre match
+      - Energy match (0.87)
+------------------------------------------------------------
+
+#2  Misty Mountains by Folk Wanderers
+    Genre: folk | Mood: dreamy | Tempo: 85 BPM
+    Match Score: 0.237 / 1.000
+
+    Why this song?
+      - Energy match (0.95)
+------------------------------------------------------------
+
+#3  Island Vibes by Reggae Kings
+    Genre: reggae | Mood: relaxed | Tempo: 100 BPM
+    Match Score: 0.230 / 1.000
+
+    Why this song?
+      - Energy match (0.92)
+------------------------------------------------------------
+
+#4  Midnight Coding by LoRoom
+    Genre: lofi | Mood: chill | Tempo: 78 BPM
+    Match Score: 0.230 / 1.000
+
+    Why this song?
+      - Energy match (0.92)
+------------------------------------------------------------
+
+#5  Heartbreak Road by Country Soul
+    Genre: country | Mood: melancholic | Tempo: 92 BPM
+    Match Score: 0.230 / 1.000
+
+    Why this song?
+      - Energy match (0.92)
+```
+
+**Edge Case 3: Extremely Low Energy (0.1)**
+```
+============================================================
+   EDGE CASE 3: Extremely Low Energy (0.1) -- Top 5 Results 
+============================================================
+
+#1  Nocturne in D Minor by Classical Ensemble
+    Genre: classical | Mood: melancholic | Tempo: 70 BPM
+    Match Score: 0.963 / 1.000
+
+    Why this song?
+      - Genre match
+      - Mood match
+      - Energy match (0.85)
+------------------------------------------------------------
+
+#2  Heartbreak Road by Country Soul
+    Genre: country | Mood: melancholic | Tempo: 92 BPM
+    Match Score: 0.420 / 1.000
+
+    Why this song?
+      - Mood match
+------------------------------------------------------------
+
+#3  Spacewalk Thoughts by Orbit Bloom
+    Genre: ambient | Mood: chill | Tempo: 60 BPM
+    Match Score: 0.205 / 1.000
+
+    Why this song?
+      - Energy match (0.82)
+------------------------------------------------------------
+
+#4  Library Rain by Paper Lanterns
+    Genre: lofi | Mood: chill | Tempo: 72 BPM
+    Match Score: 0.188 / 1.000
+
+    Why this song?
+      - Energy match (0.75)
+------------------------------------------------------------
+
+#5  Coffee Shop Stories by Slow Stereo
+    Genre: jazz | Mood: relaxed | Tempo: 90 BPM
+    Match Score: 0.182 / 1.000
+
+    Why this song?
+      - Energy match (0.73)
+```
+
+**Edge Case 4: Extremely High Energy (0.99)**
+```
+============================================================
+  EDGE CASE 4: Extremely High Energy (0.99) -- Top 5 Results
+============================================================
+
+#1  Raging Inferno by Metal Masters
+    Genre: metal | Mood: aggressive | Tempo: 160 BPM
+    Match Score: 0.990 / 1.000
+
+    Why this song?
+      - Genre match
+      - Mood match
+      - Energy match (0.96)
+------------------------------------------------------------
+
+#2  Gym Hero by Max Pulse
+    Genre: pop | Mood: intense | Tempo: 132 BPM
+    Match Score: 0.235 / 1.000
+
+    Why this song?
+      - Energy match (0.94)
+------------------------------------------------------------
+
+#3  Storm Runner by Voltline
+    Genre: rock | Mood: intense | Tempo: 152 BPM
+    Match Score: 0.230 / 1.000
+
+    Why this song?
+      - Energy match (0.92)
+------------------------------------------------------------
+
+#4  Techno Pulse by Electronic Beats
+    Genre: techno | Mood: energetic | Tempo: 135 BPM
+    Match Score: 0.230 / 1.000
+
+    Why this song?
+      - Energy match (0.92)
+------------------------------------------------------------
+
+#5  Urban Beats by DJ Nova
+    Genre: hip-hop | Mood: energetic | Tempo: 95 BPM
+    Match Score: 0.220 / 1.000
+
+    Why this song?
+      - Energy match (0.88)
+```
+
+**Edge Case 5: Sleep/Dance Conflict (Lofi + 0.92 Energy)**
+```
+============================================================
+  EDGE CASE 5: Sleep/Dance Conflict (Lofi + 0.92 Energy) -- Top 5 Results
+============================================================
+
+#1  Midnight Coding by LoRoom
+    Genre: lofi | Mood: chill | Tempo: 78 BPM
+    Match Score: 0.625 / 1.000
+
+    Why this song?
+      - Genre match
+------------------------------------------------------------
+
+#2  Focus Flow by LoRoom
+    Genre: lofi | Mood: focused | Tempo: 80 BPM
+    Match Score: 0.620 / 1.000
+
+    Why this song?
+      - Genre match
+------------------------------------------------------------
+
+#3  Library Rain by Paper Lanterns
+    Genre: lofi | Mood: chill | Tempo: 72 BPM
+    Match Score: 0.607 / 1.000
+
+    Why this song?
+      - Genre match
+------------------------------------------------------------
+
+#4  Island Vibes by Reggae Kings
+    Genre: reggae | Mood: relaxed | Tempo: 100 BPM
+    Match Score: 0.415 / 1.000
+
+    Why this song?
+      - Mood match
+------------------------------------------------------------
+
+#5  Coffee Shop Stories by Slow Stereo
+    Genre: jazz | Mood: relaxed | Tempo: 90 BPM
+    Match Score: 0.362 / 1.000
+
+    Why this song?
+      - Mood match
+```
+
+**Edge Case 6: Niche Genre (Classical Only)**
+```
+============================================================
+  EDGE CASE 6: Niche Genre (Classical Only) -- Top 5 Results
+============================================================
+
+#1  Nocturne in D Minor by Classical Ensemble
+    Genre: classical | Mood: melancholic | Tempo: 70 BPM
+    Match Score: 1.000 / 1.000
+
+    Why this song?
+      - Genre match
+      - Mood match
+      - Energy match (1.00)
+------------------------------------------------------------
+
+#2  Heartbreak Road by Country Soul
+    Genre: country | Mood: melancholic | Tempo: 92 BPM
+    Match Score: 0.458 / 1.000
+
+    Why this song?
+      - Mood match
+      - Energy match (0.83)
+------------------------------------------------------------
+
+#3  Spacewalk Thoughts by Orbit Bloom
+    Genre: ambient | Mood: chill | Tempo: 60 BPM
+    Match Score: 0.242 / 1.000
+
+    Why this song?
+      - Energy match (0.97)
+------------------------------------------------------------
+
+#4  Library Rain by Paper Lanterns
+    Genre: lofi | Mood: chill | Tempo: 72 BPM
+    Match Score: 0.225 / 1.000
+
+    Why this song?
+      - Energy match (0.90)
+------------------------------------------------------------
+
+#5  Coffee Shop Stories by Slow Stereo
+    Genre: jazz | Mood: relaxed | Tempo: 90 BPM
+    Match Score: 0.220 / 1.000
+
+    Why this song?
+      - Energy match (0.88)
+```
 
 ---
 
